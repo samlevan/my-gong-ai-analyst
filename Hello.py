@@ -26,10 +26,10 @@ import pandas as pd
 
 
 
-def call_api(call_id: str, question: str, x_csrf_token: str, g_session: str):
+def call_api(call_id: str, question: str, gong_url: str, x_csrf_token: str, g_session: str):
 
     # Set the URL
-    url = "https://us-60052.app.gong.io/ajax/ask-me-anything/get-and-store-answer?call-id=" + call_id + "&tkn="
+    url = gong_url + "/ajax/ask-me-anything/get-and-store-answer?call-id=" + call_id + "&tkn="
 
     headers = {
         'authority': 'us-60052.app.gong.io',
@@ -37,8 +37,8 @@ def call_api(call_id: str, question: str, x_csrf_token: str, g_session: str):
         'accept-language': 'en-US,en;q=0.9',
         'content-type': 'application/json',
         'dnt': '1',
-        'origin': 'https://us-60052.app.gong.io',
-        'referer': 'https://us-60052.app.gong.io/conversations?workspace-id=9159817827657862290',
+        'origin': gong_url,
+        'referer': gong_url,
         'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"macOS"',
@@ -76,7 +76,7 @@ def call_api(call_id: str, question: str, x_csrf_token: str, g_session: str):
 
     else:
         # Print response text if not successful
-        print("Response Text:", response.text)
+        print("Response Text:", response)
 
 
 def run():
@@ -90,6 +90,9 @@ def run():
 
     with st.sidebar:    
         st.write('### Configuration')    
+
+        gong_url = st.text_input(label="Enter your Gong's URL", placeholder="https://us-60052.app.gong.io")
+
         token = st.text_input(label="Enter Gong's security token", placeholder="example: cewfewfwefewq")
 
         with st.expander('How to find your security token'):
@@ -144,7 +147,7 @@ def run():
             progress_percentage = int(100 * (index + 1) / len(call_ids))
             progress_bar.progress(progress_percentage)
             time.sleep(1)  # Remove or adjust this in your actual task            
-            answer = call_api(call_id, question, token, g_session)
+            answer = call_api(call_id, question, gong_url, token, g_session)
             results.append({'call_id': call_id, 'answer': answer})
 
             # Display the table                        
